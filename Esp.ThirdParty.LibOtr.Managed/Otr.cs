@@ -3,17 +3,17 @@ using System.Diagnostics;
 using System.IO;
 
 namespace Esp.ThirdParty.LibOtr
-{
+{    
     public class Otr : IUIOperationProvider  
     {
         private readonly OtrManager _manager;
+
 
         public Otr(string pProtocol, string pAccountName, string pBaseFile)
         {
             if(!Directory.Exists(Path.GetDirectoryName(pBaseFile)))
                 Directory.CreateDirectory(Path.GetDirectoryName(pBaseFile));
             _manager = new OtrManager(this,pAccountName, pProtocol, pBaseFile);
-
         }
 
         #region Properties 
@@ -36,6 +36,20 @@ namespace Esp.ThirdParty.LibOtr
         public Action<OtrConnection> GoneSecure { get; set; } = (pConnection) => Debug.WriteLine($"{pConnection.Contact}: Gone Secure");
         public Action<OtrConnection> GoneInsecure { get; set; } = (pConnection) => Debug.WriteLine($"{pConnection.Contact}: Gone Insecure");
         public Action<OtrConnection,bool> StillSecure { get; set; } = (pConnection, pIsReply) => Debug.WriteLine($"{pConnection.Contact}: Still Secure (IsReply: {pIsReply})");
+
+        public Action<OtrConnection,string> ReceivedUnencryptedMessage { get; set; } = (pContact, pMessage) => Debug.WriteLine($"Unencrypted <{pContact}> {pMessage}");
+
+        public Func<OtrConnection, string, string> ConvertIncomingMessage { get; set; } = (pConnection, pMessage) => pMessage;
+        public Func<OtrConnection, string, string> ConvertOutgoingMessage { get; set; } = (pConnection, pMessage) => pMessage;
+
+        public Action<OtrConnection,int, string> SmpAskForAnswer { get; set; } = (pConnection,pPercent, pQuestion) => Debug.WriteLine($"{pConnection.Contact}: Has asked '{pQuestion}?' to authenticate this conversation ({pPercent}%).");
+        public Action<OtrConnection,int> SmpAskForSecret { get; set; } = (pConnection, pPercent) => Debug.WriteLine($"{pConnection.Contact}: Has asked to authenticate using shared secret ({pPercent}%).");
+        public Action<OtrConnection> SmpCheated { get; set; } = (pConnection) => Debug.WriteLine($"{pConnection.Contact} cheated in the SMP exchange.");
+        public Action<OtrConnection,int> SmpProgress { get; set; } = (pConnection, pPercent) => Debug.WriteLine($"{pConnection.Contact} progressed to {pPercent}% in smp exchange.");
+        public Action<OtrConnection> SmpSuccess { get; set; } = (pConnection) => Debug.WriteLine($"{pConnection.Contact} SMP exchange succeeded and contact is now trusted.");
+        public Action<OtrConnection> SmpFailed { get; set; } = (pConnection) => Debug.WriteLine($"{pConnection.Contact} SMP exchange failed therefore contact is not trusted.");
+        public Action<OtrConnection> SmpAborted { get; set; } = (pConnection) => Debug.WriteLine($"{pConnection.Contact} SMP exchange aborted therefore contact is not trusted.");
+
         #endregion
 
         public OtrMessage SendMessage(OtrContact pContact, string pMessage)
@@ -162,7 +176,27 @@ namespace Esp.ThirdParty.LibOtr
 
         void IUIOperationProvider.OnSmpEvent(OtrConnection pConnection, OtrSmpEvent pEvent, string pQuestion, int pPercent)
         {
-            Console.WriteLine("SMP Event");
+            switch (pEvent)
+            {
+                case OtrSmpEvent.AskForSecret:
+                    SmpAskForSecret(pConnection, pPercent);
+                    break;
+                case OtrSmpEvent.AskForAnswer:
+                    SmpAskForAnswer(pConnection, pPercent, pQuestion);
+                    break;
+                case OtrSmpEvent.Cheated:
+                    break;
+                case OtrSmpEvent.InProgress:
+                    break;
+                case OtrSmpEvent.Success:
+                    break;
+                case OtrSmpEvent.Failure:
+                    break;
+                case OtrSmpEvent.Abort:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(pEvent), pEvent, null);
+            }
         }
 
         void IUIOperationProvider.OnMessageEvent(OtrConnection pConnection, OtrMessageEvent pEvent, string pMessage, int pGCryptErrorCode)
@@ -194,7 +228,8 @@ namespace Esp.ThirdParty.LibOtr
                 case OtrMessageEvent.ReceivedGeneralError:
                     break;
                 case OtrMessageEvent.ReceivedUnencrypted:
-                    break;
+                    ReceivedUnencryptedMessage(pConnection, pMessage);
+                    return;
                 case OtrMessageEvent.ReceivedUnrecognised:
                     break;
                 case OtrMessageEvent.OtherInstance:
@@ -212,8 +247,15 @@ namespace Esp.ThirdParty.LibOtr
 
         string IUIOperationProvider.OnConvertMessage(OtrConnection pConnection, OtrConvertType pCoversionType, string pMessage)
         {
-            Console.WriteLine("Convert");
-            return pMessage;
+            switch (pCoversionType)
+            {
+                case OtrConvertType.Sending:
+                    return ConvertOutgoingMessage(pConnection, pMessage);
+                case OtrConvertType.Recieving:
+                    return ConvertIncomingMessage(pConnection, pMessage);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(pCoversionType), pCoversionType, null);
+            }
         }
 
         #endregion
