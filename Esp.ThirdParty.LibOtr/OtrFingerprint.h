@@ -24,6 +24,12 @@ namespace Esp {
 					OtrFingerprintTrust get();
 					void set(OtrFingerprintTrust pTrust);
 				}
+
+				property array<System::Byte>^ Bytes {
+					array<System::Byte>^ get();
+				}
+
+				virtual String^ ToString() override;
 			};
 		}
 	}

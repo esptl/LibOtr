@@ -1,6 +1,7 @@
 #pragma once
 
 #include "OtrContact.h"
+#include "OtrFingerprint.h"
 
 using namespace System;
 
@@ -10,8 +11,6 @@ namespace Esp {
 	{
 		namespace LibOtr
 		{
-
-
 			public enum class OtrConnectionState : char { Unencrypted, Encrpyted, Verfied, Terminated };
 			public ref class OtrConnection {
 
@@ -36,6 +35,14 @@ namespace Esp {
 				property int TheirInstag {
 					int get();
 					void set(int);
+				}
+
+				property OtrFingerprint^ OurFingerprint {
+					OtrFingerprint^ get();
+				}
+
+				property OtrFingerprint^ TheirFingerprint {
+					OtrFingerprint^ get();
 				}
 
 				property OtrContact^ Contact {

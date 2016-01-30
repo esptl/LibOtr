@@ -37,6 +37,29 @@ namespace Esp {
 						break;
 				}				
 			}
+
+			array<System::Byte>^ OtrFingerprint::Bytes::get() {
+				if (!_fingerprint->fingerprint) return nullptr;
+
+				auto result = gcnew array<System::Byte>(20);
+				for (auto i = 0; i < 20; i++)
+					result[i] = _fingerprint->fingerprint[i];
+				return result;
+			}
+
+			String^ OtrFingerprint::ToString()
+			{
+				if (!_fingerprint->fingerprint) return "NULL";
+
+				auto result = gcnew Text::StringBuilder();
+				for (auto i = 0; i < 20; i++)
+				{
+					if (i % 4 == 0 && i)
+						result->Append(" ");
+					result->AppendFormat("{0:x2}", _fingerprint->fingerprint[i]);
+				}
+				return result->ToString();
+			}
 		}
 	}
 }

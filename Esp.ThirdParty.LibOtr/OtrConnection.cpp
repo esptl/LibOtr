@@ -48,9 +48,20 @@ namespace Esp {
 			{
 				return _context->their_instance;
 			}
+
 			void OtrConnection::TheirInstag::set(int pValue)
 			{
 				_context->their_instance = pValue;
+			}
+
+			OtrFingerprint^ OtrConnection::OurFingerprint::get()
+			{
+				return nullptr;
+			}
+
+			OtrFingerprint^ OtrConnection::TheirFingerprint::get()
+			{
+				return gcnew OtrFingerprint(_context->active_fingerprint);
 			}
 
 			OtrContact^ OtrConnection::Contact::get() {
