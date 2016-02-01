@@ -1,17 +1,19 @@
 #include "stdafx.h"
 #include "OtrConnection.h"
-
+#include "OtrManager.h"
 
 using namespace System;
+using namespace System::Runtime::InteropServices;
 
 namespace Esp {
 	namespace ThirdParty
 	{
 		namespace LibOtr
 		{
-			OtrConnection::OtrConnection(ConnContext *pContext, bool pNewConnection)
+			OtrConnection::OtrConnection(OtrManager^ pManager, ConnContext *pContext, bool pNewConnection)
 			{
 				_context = pContext;
+				_manager = pManager;
 				_newConnection = pNewConnection;			
 			}
 
@@ -66,6 +68,49 @@ namespace Esp {
 
 			OtrContact^ OtrConnection::Contact::get() {
 				return gcnew OtrContact(gcnew String(_context->protocol), gcnew String(_context->username), gcnew String(_context->accountname));
+			}
+
+			void OtrConnection::InitiateSmp(String^ pQuestion, String^ pAnswer)
+			{
+				auto question = (const char *)Marshal::StringToHGlobalAnsi(pQuestion).ToPointer();
+				auto secret = (const char *)Marshal::StringToHGlobalAnsi(pAnswer).ToPointer();
+
+				try {
+					_manager->OtrlMessageInitiateSmpQ(_context, question, (unsigned char*)secret, (int)strlen(secret));
+				}
+				finally {
+					Marshal::FreeHGlobal((IntPtr)(void*)question);
+					Marshal::FreeHGlobal((IntPtr)(void*)secret);
+				}
+			}
+
+			void OtrConnection::InitiateSmp(String^ pSecret)
+			{
+				auto secret = (const char *)Marshal::StringToHGlobalAnsi(pSecret).ToPointer();
+			
+				try {
+					_manager->OtrlMessageInitiateSmp(_context, (unsigned char*)secret, (int)strlen(secret));
+				}
+				finally {
+					Marshal::FreeHGlobal((IntPtr)(void*)secret);
+				}				
+			}
+
+			void OtrConnection::AbortSmp()
+			{
+				_manager->OtrlMessageAbortSmp(_context);
+			}
+
+			void OtrConnection::AnswerSmp(String^ pSecret)
+			{
+				auto secret = (const char *)Marshal::StringToHGlobalAnsi(pSecret).ToPointer();
+
+				try {
+					_manager->OtrlMessageRespondSmp(_context, (unsigned char*)secret, (int)strlen(secret));
+				}
+				finally {
+					Marshal::FreeHGlobal((IntPtr)(void*)secret);
+				}
 			}
 		}
 	}

@@ -26,6 +26,12 @@ namespace Esp {
 				IntPtr _fingerPrintFile;
 				OtrlUserState _state;
 				UIOperations^ _operations;
+			internal:
+				void OtrlMessageInitiateSmp( ConnContext *context, const unsigned char *secret,	size_t secretlen);
+				void OtrlMessageInitiateSmpQ(ConnContext *context, const char *question, const unsigned char *secret, size_t secretlen);
+				void OtrlMessageRespondSmp(ConnContext *context, const unsigned char *secret, size_t secretlen);
+				void OtrlMessageAbortSmp(ConnContext *context);
+
 			public:
 				OtrManager(
 					IUIOperationProvider^ pProvider,

@@ -51,9 +51,10 @@ namespace Esp {
 			typedef void(__stdcall *convertmsgfreehook)(void *, ConnContext *, char *);
 			typedef void(__stdcall *timerhook)(void *, unsigned int);
 
-			UIOperations::UIOperations(IUIOperationProvider^ pProvider)
+			UIOperations::UIOperations(OtrManager^ pManager,IUIOperationProvider^ pProvider)
 			{
 				_provider = pProvider;
+				_manager = pManager;
 
 				_ops = (OtrlMessageAppOps*)Marshal::AllocHGlobal(sizeof(OtrlMessageAppOps)).ToPointer();
 
@@ -209,7 +210,7 @@ namespace Esp {
 
 			OtrlPolicy UIOperations::HookGetPolicy(void *pOpdata, ConnContext *pContext)
 			{
-				switch(_provider->OnGetPolicy(gcnew OtrConnection(pContext, false)))
+				switch(_provider->OnGetPolicy(gcnew OtrConnection(_manager,pContext, false)))
 				{
 				case OtrPolicy::Never :
 					return OTRL_POLICY_NEVER;
@@ -283,26 +284,26 @@ namespace Esp {
 			/* A ConnContext has entered a secure state. */
 			void UIOperations::HookGoneSecure(void *pOpdata, ConnContext *pContext)
 			{
-				_provider->OnGoneSecure(gcnew OtrConnection(pContext, false));
+				_provider->OnGoneSecure(gcnew OtrConnection(_manager,pContext, false));
 			}
 
 			/* A ConnContext has left a secure state. */
 			void UIOperations::HookGoneInsecure(void *pOpdata, ConnContext *pContext)
 			{				
-				_provider->OnGoneInsecure(gcnew OtrConnection(pContext, false));
+				_provider->OnGoneInsecure(gcnew OtrConnection(_manager,pContext, false));
 			}
 
 			/* We have completed an authentication, using the D-H keys we
 			* already knew.  is_reply indicates whether we initiated the AKE. */
 			void UIOperations::HookStillSecure(void *pOpdata, ConnContext *pContext, int pIsReply)
 			{
-				_provider->OnStillSecure(gcnew OtrConnection(pContext, false), pIsReply==1);
+				_provider->OnStillSecure(gcnew OtrConnection(_manager,pContext, false), pIsReply==1);
 			}
 
 			/* Find the maximum message size supported by this protocol. */
 			int UIOperations::HookMaxMessageSize(void *pOpdata, ConnContext *pContext)
 			{
-				return _provider->OnGetMaxMessageSize(gcnew OtrConnection(pContext, false));
+				return _provider->OnGetMaxMessageSize(gcnew OtrConnection(_manager,pContext, false));
 			}
 
 			/* Return a newly allocated string containing a human-friendly
@@ -334,7 +335,7 @@ namespace Esp {
 					Marshal::Copy((IntPtr)(void *)pUsedata, useData, 0, pUsedatalen);
 				auto symKey = gcnew array<System::Byte>(OTRL_EXTRAKEY_BYTES);
 				Marshal::Copy((IntPtr)(void *)pSymkey, symKey, 0, OTRL_EXTRAKEY_BYTES);
-				return _provider->OnReceivedSymKey(gcnew OtrConnection(pContext, false),pUse, useData, symKey);
+				return _provider->OnReceivedSymKey(gcnew OtrConnection(_manager,pContext, false),pUse, useData, symKey);
 			}
 
 			/* Return a string according to the error event. This string will then
@@ -352,7 +353,7 @@ namespace Esp {
 			const char* UIOperations::HookOtrErrorMessage(void *pOpdata, ConnContext *pContext,
 				OtrlErrorCode pErrCode)
 			{
-				auto connection = gcnew OtrConnection(pContext, false);
+				auto connection = gcnew OtrConnection(_manager,pContext, false);
 				String^ errmsg;
 				switch(pErrCode)
 				{
@@ -386,7 +387,7 @@ namespace Esp {
 			* */
 			const char* UIOperations::HookResentMsgPrefix(void *pOpdata, ConnContext *pContext)
 			{
-				return (const char*)Marshal::StringToHGlobalAnsi(_provider->OnGetResentMessagePrefix(gcnew OtrConnection(pContext,false))).ToPointer();
+				return (const char*)Marshal::StringToHGlobalAnsi(_provider->OnGetResentMessagePrefix(gcnew OtrConnection(_manager,pContext,false))).ToPointer();
 			}
 
 			/* Deallocate a string returned by resent_msg_prefix */
@@ -424,26 +425,26 @@ namespace Esp {
 				switch(smp_event)
 				{
 				case OTRL_SMPEVENT_ASK_FOR_SECRET:
-					_provider->OnSmpEvent(gcnew OtrConnection(context,false), OtrSmpEvent::AskForSecret, question, (int)progress_percent);
+					_provider->OnSmpEvent(gcnew OtrConnection(_manager,context,false), OtrSmpEvent::AskForSecret, question, (int)progress_percent);
 					break;
 				case OTRL_SMPEVENT_ASK_FOR_ANSWER:
-					_provider->OnSmpEvent(gcnew OtrConnection(context, false), OtrSmpEvent::AskForAnswer, question, (int)progress_percent);
+					_provider->OnSmpEvent(gcnew OtrConnection(_manager,context, false), OtrSmpEvent::AskForAnswer, question, (int)progress_percent);
 					break;
 				case  OTRL_SMPEVENT_CHEATED:
 				case  OTRL_SMPEVENT_ERROR:
-					_provider->OnSmpEvent(gcnew OtrConnection(context, false), OtrSmpEvent::Cheated, question, (int)progress_percent);
+					_provider->OnSmpEvent(gcnew OtrConnection(_manager, context, false), OtrSmpEvent::Cheated, question, (int)progress_percent);
 					break;
 				case  OTRL_SMPEVENT_IN_PROGRESS:
-					_provider->OnSmpEvent(gcnew OtrConnection(context, false), OtrSmpEvent::InProgress, question, (int)progress_percent);
+					_provider->OnSmpEvent(gcnew OtrConnection(_manager, context, false), OtrSmpEvent::InProgress, question, (int)progress_percent);
 					break;
 				case  OTRL_SMPEVENT_SUCCESS:
-					_provider->OnSmpEvent(gcnew OtrConnection(context, false), OtrSmpEvent::Success, question, (int)progress_percent);
+					_provider->OnSmpEvent(gcnew OtrConnection(_manager, context, false), OtrSmpEvent::Success, question, (int)progress_percent);
 					break;
 				case  OTRL_SMPEVENT_FAILURE:
-					_provider->OnSmpEvent(gcnew OtrConnection(context, false), OtrSmpEvent::Failure, question, (int)progress_percent);
+					_provider->OnSmpEvent(gcnew OtrConnection(_manager, context, false), OtrSmpEvent::Failure, question, (int)progress_percent);
 					break;
 				case  OTRL_SMPEVENT_ABORT:
-					_provider->OnSmpEvent(gcnew OtrConnection(context, false), OtrSmpEvent::Abort, question, (int)progress_percent);
+					_provider->OnSmpEvent(gcnew OtrConnection(_manager, context, false), OtrSmpEvent::Abort, question, (int)progress_percent);
 					break;
 				}
 			}
@@ -495,7 +496,7 @@ namespace Esp {
 				gcry_error_t pErr)
 			{
 				auto message = pMessage == nullptr ? nullptr : gcnew String(pMessage);
-				auto connection = gcnew OtrConnection(pContext,false);
+				auto connection = gcnew OtrConnection(_manager, pContext,false);
 				switch(pMsgEvent)
 				{
 				case OTRL_MSGEVENT_ENCRYPTION_REQUIRED :
@@ -563,7 +564,7 @@ namespace Esp {
 			{
 				String^ coverted = nullptr;
 				auto message = src == nullptr ? nullptr : gcnew String(src);
-				auto connection = gcnew OtrConnection(context, false);
+				auto connection = gcnew OtrConnection(_manager, context, false);
 				switch(convert_type)
 				{
 				case OTRL_CONVERT_SENDING :

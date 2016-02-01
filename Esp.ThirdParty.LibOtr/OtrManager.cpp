@@ -27,7 +27,7 @@ namespace Esp {
 				_fingerPrintFile = Marshal::StringToHGlobalAnsi(pBaseFile + ".fingers");
 				_instagFile = Marshal::StringToHGlobalAnsi(pBaseFile + ".instag");
 				_state = otrl_userstate_create();
-				_operations = gcnew UIOperations(pProvider);
+				_operations = gcnew UIOperations(this,pProvider);
 				try
 				{
 					gcry_error_t err = 0;
@@ -98,11 +98,11 @@ namespace Esp {
 					{
 						String^ newMsg = gcnew String(newMessage);
 						otrl_message_free(newMessage);
-						return gcnew OtrMessage(gcnew OtrConnection(context, false), newMsg);
+						return gcnew OtrMessage(gcnew OtrConnection(this,context, false), newMsg);
 					}
 					if (err)
 						return nullptr;
-					return gcnew OtrMessage(gcnew OtrConnection(context, false), pMessage);
+					return gcnew OtrMessage(gcnew OtrConnection(this,context, false), pMessage);
 				}
 				finally {
 					Marshal::FreeHGlobal((IntPtr)(void*)message);
@@ -127,11 +127,11 @@ namespace Esp {
 					{
 						String^ newMsg = gcnew String(newMessage);
 						otrl_message_free(newMessage);
-						return gcnew OtrMessage(gcnew OtrConnection(context, false), newMsg);
+						return gcnew OtrMessage(gcnew OtrConnection(this, context, false), newMsg);
 					}
 					if (err)
 						return nullptr;
-					return gcnew OtrMessage(gcnew OtrConnection(context, false), pMessage);
+					return gcnew OtrMessage(gcnew OtrConnection(this, context, false), pMessage);
 				}
 				finally {
 					Marshal::FreeHGlobal((IntPtr)(void*)message);
@@ -148,7 +148,7 @@ namespace Esp {
 					pContact->ProtocolAnsi, OTRL_INSTAG_BEST, 1, &added, nullptr, nullptr);
 				if (context == nullptr)
 					return nullptr;
-				return gcnew OtrConnection(context, added == 1);
+				return gcnew OtrConnection(this, context, added == 1);
 			}
 
 			unsigned int OtrManager::GenerateInstag(String^ pAccountName)
@@ -180,6 +180,26 @@ namespace Esp {
 			void OtrManager::WriteFingerprints()
 			{
 				otrl_privkey_write_fingerprints(_state,(const char*)_fingerPrintFile.ToPointer());
+			}
+
+			void OtrManager::OtrlMessageInitiateSmp(ConnContext *context, const unsigned char *secret, size_t secretlen)
+			{
+				otrl_message_initiate_smp(_state, _operations->_ops, context,nullptr, secret, secretlen);
+			}
+
+			void OtrManager::OtrlMessageInitiateSmpQ(ConnContext *context, const char *question, const unsigned char *secret, size_t secretlen)
+			{
+				otrl_message_initiate_smp_q(_state, _operations->_ops, context, nullptr,question, secret, secretlen);
+			}
+
+			void OtrManager::OtrlMessageRespondSmp(ConnContext *context, const unsigned char *secret, size_t secretlen)
+			{
+				otrl_message_respond_smp(_state, _operations->_ops, context, nullptr, secret, secretlen);
+			}
+
+			void OtrManager::OtrlMessageAbortSmp(ConnContext *context)
+			{
+				otrl_message_abort_smp(_state, _operations->_ops, context, nullptr);
 			}
 		}
 	}

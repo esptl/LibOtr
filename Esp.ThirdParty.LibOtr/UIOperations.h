@@ -65,7 +65,7 @@ namespace Esp {
 			{
 			private:
 				IUIOperationProvider^ _provider;
-				
+				OtrManager^ _manager;
 				GCHandle _gcGetPolicy;
 				GCHandle _gcCreatePrivKey;
 				GCHandle _gcIsLoggedIn;
@@ -126,7 +126,7 @@ namespace Esp {
 				OtrlMessageAppOps* _ops;
 
 			public:
-				UIOperations(IUIOperationProvider^ pProvider);
+				UIOperations(OtrManager^ pManager, IUIOperationProvider^ pProvider);
 				~UIOperations();
 			};
 		}
