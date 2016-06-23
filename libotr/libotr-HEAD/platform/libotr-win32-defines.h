@@ -8,4 +8,4 @@
 
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
-#define snprintf _snprintf
+//#define snprintf _snprintf

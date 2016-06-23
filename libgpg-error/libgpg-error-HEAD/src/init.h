@@ -14,7 +14,7 @@
    Lesser General Public License for more details.
  
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifndef INIT_H
@@ -61,7 +61,7 @@ struct tls_space_s *get_tls (void);
 
 
 /* Explicit constructor for w32-gettext.c  */
-#if !defined(DLL_EXPORT) || !defined(_GPG_ERR_HAVE_CONSTRUCTOR)
+#ifndef DLL_EXPORT
 void _gpg_w32__init_gettext_module (void);
 #endif
 

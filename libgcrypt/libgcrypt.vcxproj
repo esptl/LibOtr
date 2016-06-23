@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -16,6 +16,7 @@
     <ClInclude Include="libgcrypt-HEAD\platform\libgcrypt-win32-defines.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\libgpg-error\libgpg-error-HEAD\src\w32-lock.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\arcfour.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\blowfish.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\camellia-glue.c" />
@@ -28,7 +29,9 @@
     <ClCompile Include="libgcrypt-HEAD\cipher\cipher-cmac.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\cipher-ctr.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\cipher-gcm.c" />
+    <ClCompile Include="libgcrypt-HEAD\cipher\cipher-ocb.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\cipher-ofb.c" />
+    <ClCompile Include="libgcrypt-HEAD\cipher\cipher-poly1305.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\cipher-selftest.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\cipher.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\crc.c" />
@@ -42,6 +45,7 @@
     <ClCompile Include="libgcrypt-HEAD\cipher\ecc-misc.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\ecc.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\elgamal.c" />
+    <ClCompile Include="libgcrypt-HEAD\cipher\gost-s-box.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\gost28147.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\gostr3411-94.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\hash-common.c" />
@@ -51,10 +55,12 @@
     <ClCompile Include="libgcrypt-HEAD\cipher\mac-cmac.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\mac-gmac.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\mac-hmac.c" />
+    <ClCompile Include="libgcrypt-HEAD\cipher\mac-poly1305.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\mac.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\md.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\md4.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\md5.c" />
+    <ClCompile Include="libgcrypt-HEAD\cipher\poly1305.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\primegen.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\pubkey-util.c" />
     <ClCompile Include="libgcrypt-HEAD\cipher\pubkey.c" />
@@ -100,6 +106,7 @@
     <ClCompile Include="libgcrypt-HEAD\mpi\mpih-mul.c" />
     <ClCompile Include="libgcrypt-HEAD\mpi\mpiutil.c" />
     <ClCompile Include="libgcrypt-HEAD\random\random-csprng.c" />
+    <ClCompile Include="libgcrypt-HEAD\random\random-drbg.c" />
     <ClCompile Include="libgcrypt-HEAD\random\random-fips.c" />
     <ClCompile Include="libgcrypt-HEAD\random\random-system.c" />
     <ClCompile Include="libgcrypt-HEAD\random\random.c" />
@@ -128,13 +135,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>

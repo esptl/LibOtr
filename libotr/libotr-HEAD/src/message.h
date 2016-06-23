@@ -102,7 +102,7 @@ typedef struct s_OtrlMessageAppOps {
 
     /* When the list of ConnContexts changes (including a change in
      * state), this is called so the UI can be updated. */
-    void (__stdcall *update_context_list)(void *opdata);
+    void (__stdcall  *update_context_list)(void *opdata);
 
     /* A new fingerprint for the given user has been received. */
     void (__stdcall *new_fingerprint)(void *opdata, OtrlUserState us,
@@ -127,11 +127,11 @@ typedef struct s_OtrlMessageAppOps {
 
     /* Return a newly allocated string containing a human-friendly
      * representation for the given account */
-    const char *(__stdcall *account_name)(void *opdata, const char *account,
+    const char *(__stdcall  *account_name)(void *opdata, const char *account,
 	    const char *protocol);
 
     /* Deallocate a string returned by account_name */
-    void (__stdcall *account_name_free)(void *opdata, const char *account_name);
+    void (__stdcall  *account_name_free)(void *opdata, const char *account_name);
 
     /* We received a request from the buddy to use the current "extra"
      * symmetric key.  The key will be passed in symkey, of length
@@ -154,20 +154,20 @@ typedef struct s_OtrlMessageAppOps {
      *		sent an unreadable encrypted message
      * - OTRL_ERRCODE_MSG_MALFORMED
      * 		message sent is malformed */
-    const char *(__stdcall *otr_error_message)(void *opdata, ConnContext *context,
+    const char *(__stdcall  *otr_error_message)(void *opdata, ConnContext *context,
 	OtrlErrorCode err_code);
 
     /* Deallocate a string returned by otr_error_message */
-    void (__stdcall *otr_error_message_free)(void *opdata, const char *err_msg);
+    void (__stdcall  *otr_error_message_free)(void *opdata, const char *err_msg);
 
     /* Return a string that will be prefixed to any resent message. If this
      * function is not provided by the application then the default prefix,
      * "[resent]", will be used.
      * */
-    const char *(__stdcall *resent_msg_prefix)(void *opdata, ConnContext *context);
+    const char *(__stdcall  *resent_msg_prefix)(void *opdata, ConnContext *context);
 
     /* Deallocate a string returned by resent_msg_prefix */
-    void (__stdcall *resent_msg_prefix_free)(void *opdata, const char *prefix);
+    void (__stdcall  *resent_msg_prefix_free)(void *opdata, const char *prefix);
 
     /* Update the authentication UI with respect to SMP events
      * These are the possible events:
@@ -191,7 +191,7 @@ typedef struct s_OtrlMessageAppOps {
      * - OTRL_SMPEVENT_ERROR
      *      (same as OTRL_SMPEVENT_CHEATED)
      * */
-    void (__stdcall *handle_smp_event)(void *opdata, OtrlSMPEvent smp_event,
+    void (__stdcall  *handle_smp_event)(void *opdata, OtrlSMPEvent smp_event,
 	    ConnContext *context, unsigned short progress_percent,
 	    char *question);
 
@@ -237,24 +237,24 @@ typedef struct s_OtrlMessageAppOps {
      *      Cannot recognize the type of OTR message received.
      * - OTRL_MSGEVENT_RCVDMSG_FOR_OTHER_INSTANCE
      *      Received and discarded a message intended for another instance. */
-    void (__stdcall *handle_msg_event)(void *opdata, OtrlMessageEvent msg_event,
+    void (__stdcall  *handle_msg_event)(void *opdata, OtrlMessageEvent msg_event,
 		ConnContext *context, const char *message,
 		gcry_error_t err);
 
      /* Create a instance tag for the given accountname/protocol if
       * desired. */
-    void (__stdcall *create_instag)(void *opdata, const char *accountname,
+    void (__stdcall  *create_instag)(void *opdata, const char *accountname,
 		const char *protocol);
 
      /* Called immediately before a data message is encrypted, and after a data
       * message is decrypted. The OtrlConvertType parameter has the value
       * OTRL_CONVERT_SENDING or OTRL_CONVERT_RECEIVING to differentiate these
       * cases. */
-    void (__stdcall *convert_msg)(void *opdata, ConnContext *context,
+    void (__stdcall  *convert_msg)(void *opdata, ConnContext *context,
 		OtrlConvertType convert_type, char ** dest, const char *src);
 
      /* Deallocate a string returned by convert_msg. */
-    void (__stdcall *convert_free)(void *opdata, ConnContext *context, char *dest);
+    void (__stdcall  *convert_free)(void *opdata, ConnContext *context, char *dest);
 
     /* When timer_control is called, turn off any existing periodic
      * timer.
@@ -291,7 +291,7 @@ typedef struct s_OtrlMessageAppOps {
      * of long-past messages (the first messages of an OTR
      * conversation).
      */
-    void (__stdcall *timer_control)(void *opdata, unsigned int interval);
+    void (__stdcall  *timer_control)(void *opdata, unsigned int interval);
 
 } OtrlMessageAppOps;
 

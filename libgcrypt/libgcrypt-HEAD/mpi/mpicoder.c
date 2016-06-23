@@ -1,7 +1,7 @@
 /* mpicoder.c  -  Coder for the external representation of MPIs
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
  *               2008 Free Software Foundation, Inc.
- * Copyright (C) 2013 g10 Code GmbH
+ * Copyright (C) 2013, 2014 g10 Code GmbH
  *
  * This file is part of Libgcrypt.
  *
@@ -27,7 +27,20 @@
 #include "mpi-internal.h"
 #include "g10lib.h"
 
+/* The maximum length we support in the functions converting an
+ * external representation to an MPI.  This limit is used to catch
+ * programming errors and to avoid DoS due to insane long allocations.
+ * The 16 MiB limit is actually ridiculous large but some of those PQC
+ * algorithms use quite large keys and they might end up using MPIs
+ * for that.  */
+#define MAX_EXTERN_SCAN_BYTES (16*1024*1024)
+
+/* The maximum length (in bits) we support for OpenPGP MPIs.  Note
+ * that OpenPGP's MPI format uses only two bytes and thus would be
+ * limited to 64k anyway.  Note that this limit matches that used by
+ * GnuPG.  */
 #define MAX_EXTERN_MPI_BITS 16384
+
 
 /* Helper used to scan PGP style MPIs.  Returns NULL on failure. */
 static gcry_mpi_t
@@ -104,7 +117,13 @@ mpi_fromstr (gcry_mpi_t val, const char *str)
   if ( *str == '0' && str[1] == 'x' )
     str += 2;
 
-  nbits = 4 * strlen (str);
+  nbits = strlen (str);
+  if (nbits > MAX_EXTERN_SCAN_BYTES)
+    {
+      mpi_clear (val);
+      return 1;  /* Error.  */
+    }
+  nbits *= 4;
   if ((nbits % 8))
     prepend_zero = 1;
 
@@ -181,19 +200,27 @@ mpi_fromstr (gcry_mpi_t val, const char *str)
    returned value is stored as little endian and right padded with
    zeroes so that the returned buffer has at least FILL_LE bytes.
 
+   If EXTRAALLOC > 0 the returned buffer has these number of bytes
+   extra allocated at the end; if EXTRAALLOC < 0 the returned buffer
+   has the absolute value of EXTRAALLOC allocated at the begin of the
+   buffer (the are not initialized) and the MPI is stored right after
+   this.  This feature is useful to allow the caller to prefix the
+   returned value.  EXTRAALLOC is _not_ included in the value stored
+   at NBYTES.
+
    Caller must free the return string.  This function returns an
    allocated buffer with NBYTES set to zero if the value of A is zero.
    If sign is not NULL, it will be set to the sign of the A.  On error
    NULL is returned and ERRNO set appropriately.  */
 static unsigned char *
-do_get_buffer (gcry_mpi_t a, unsigned int fill_le,
+do_get_buffer (gcry_mpi_t a, unsigned int fill_le, int extraalloc,
                unsigned int *nbytes, int *sign, int force_secure)
 {
-  unsigned char *p, *buffer;
+  unsigned char *p, *buffer, *retbuffer;
   unsigned int length, tmp;
   mpi_limb_t alimb;
   int i;
-  size_t n;
+  size_t n, n2;
 
   if (sign)
     *sign = a->sign;
@@ -202,10 +229,20 @@ do_get_buffer (gcry_mpi_t a, unsigned int fill_le,
   n = *nbytes? *nbytes:1; /* Allocate at least one byte.  */
   if (n < fill_le)
     n = fill_le;
-  p = buffer = (force_secure || mpi_is_secure(a))? xtrymalloc_secure (n)
-						 : xtrymalloc (n);
-  if (!buffer)
+  if (extraalloc < 0)
+    n2 = n + -extraalloc;
+  else
+    n2 = n + extraalloc;
+
+  retbuffer = (force_secure || mpi_is_secure(a))? xtrymalloc_secure (n2)
+                                                : xtrymalloc (n2);
+  if (!retbuffer)
     return NULL;
+  if (extraalloc < 0)
+    buffer = retbuffer + -extraalloc;
+  else
+    buffer = retbuffer;
+  p = buffer;
 
   for (i=a->nlimbs-1; i >= 0; i--)
     {
@@ -244,7 +281,7 @@ do_get_buffer (gcry_mpi_t a, unsigned int fill_le,
         *p++ = 0;
       *nbytes = length;
 
-      return buffer;
+      return retbuffer;
     }
 
   /* This is sub-optimal but we need to do the shift operation because
@@ -252,8 +289,8 @@ do_get_buffer (gcry_mpi_t a, unsigned int fill_le,
   for (p=buffer; *nbytes && !*p; p++, --*nbytes)
     ;
   if (p != buffer)
-    memmove (buffer,p, *nbytes);
-  return buffer;
+    memmove (buffer, p, *nbytes);
+  return retbuffer;
 }
 
 
@@ -261,14 +298,21 @@ byte *
 _gcry_mpi_get_buffer (gcry_mpi_t a, unsigned int fill_le,
                       unsigned int *r_nbytes, int *sign)
 {
-  return do_get_buffer (a, fill_le, r_nbytes, sign, 0);
+  return do_get_buffer (a, fill_le, 0, r_nbytes, sign, 0);
+}
+
+byte *
+_gcry_mpi_get_buffer_extra (gcry_mpi_t a, unsigned int fill_le, int extraalloc,
+                            unsigned int *r_nbytes, int *sign)
+{
+  return do_get_buffer (a, fill_le, extraalloc, r_nbytes, sign, 0);
 }
 
 byte *
 _gcry_mpi_get_secure_buffer (gcry_mpi_t a, unsigned int fill_le,
                              unsigned int *r_nbytes, int *sign)
 {
-  return do_get_buffer (a, fill_le, r_nbytes, sign, 1);
+  return do_get_buffer (a, fill_le, 0, r_nbytes, sign, 1);
 }
 
 
@@ -413,9 +457,9 @@ twocompl (unsigned char *p, unsigned int n)
 
 
 /* Convert the external representation of an integer stored in BUFFER
-   with a length of BUFLEN into a newly create MPI returned in
-   RET_MPI.  If NBYTES is not NULL, it will receive the number of
-   bytes actually scanned after a successful operation.  */
+ * with a length of BUFLEN into a newly create MPI returned in
+ * RET_MPI.  If NSCANNED is not NULL, it will receive the number of
+ * bytes actually scanned after a successful operation.  */
 gcry_err_code_t
 _gcry_mpi_scan (struct gcry_mpi **ret_mpi, enum gcry_mpi_format format,
                 const void *buffer_arg, size_t buflen, size_t *nscanned)
@@ -424,6 +468,13 @@ _gcry_mpi_scan (struct gcry_mpi **ret_mpi, enum gcry_mpi_format format,
   struct gcry_mpi *a = NULL;
   unsigned int len;
   int secure = (buffer && _gcry_is_secure (buffer));
+
+  if (buflen > MAX_EXTERN_SCAN_BYTES)
+    {
+      if (nscanned)
+        *nscanned = 0;
+      return GPG_ERR_INV_OBJ;
+    }
 
   if (format == GCRYMPI_FMT_SSH)
     len = 0;

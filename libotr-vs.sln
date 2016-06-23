@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgpg-error", "libgpg-error\libgpg-error.vcxproj", "{A0A60AFF-1DBA-485E-8AEB-F919A2CE2D07}"
 EndProject
@@ -14,8 +14,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libotr", "libotr\libotr.vcx
 	ProjectSection(ProjectDependencies) = postProject
 		{6FF57646-49F2-43EE-9AEE-1190D54C0FE0} = {6FF57646-49F2-43EE-9AEE-1190D54C0FE0}
 	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OTRTest", "OTRTest\OTRTest.vcxproj", "{96436D8C-CFF9-4C5F-ABBC-D88E890BC857}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.LibOtr", "NuGet.LibOtr\NuGet.LibOtr.csproj", "{E90CB415-EC24-4EBB-B7BD-FE84D9C70FC1}"
 EndProject
@@ -57,14 +55,6 @@ Global
 		{6088223A-3EC9-4A55-8169-335F94AE226C}.Release|Win32.ActiveCfg = Release|Win32
 		{6088223A-3EC9-4A55-8169-335F94AE226C}.Release|Win32.Build.0 = Release|Win32
 		{6088223A-3EC9-4A55-8169-335F94AE226C}.Release|x64.ActiveCfg = Release|Win32
-		{96436D8C-CFF9-4C5F-ABBC-D88E890BC857}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{96436D8C-CFF9-4C5F-ABBC-D88E890BC857}.Debug|Win32.ActiveCfg = Debug|Win32
-		{96436D8C-CFF9-4C5F-ABBC-D88E890BC857}.Debug|Win32.Build.0 = Debug|Win32
-		{96436D8C-CFF9-4C5F-ABBC-D88E890BC857}.Debug|x64.ActiveCfg = Debug|Win32
-		{96436D8C-CFF9-4C5F-ABBC-D88E890BC857}.Release|Any CPU.ActiveCfg = Release|Win32
-		{96436D8C-CFF9-4C5F-ABBC-D88E890BC857}.Release|Win32.ActiveCfg = Release|Win32
-		{96436D8C-CFF9-4C5F-ABBC-D88E890BC857}.Release|Win32.Build.0 = Release|Win32
-		{96436D8C-CFF9-4C5F-ABBC-D88E890BC857}.Release|x64.ActiveCfg = Release|Win32
 		{E90CB415-EC24-4EBB-B7BD-FE84D9C70FC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E90CB415-EC24-4EBB-B7BD-FE84D9C70FC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E90CB415-EC24-4EBB-B7BD-FE84D9C70FC1}.Debug|Win32.ActiveCfg = Debug|Any CPU

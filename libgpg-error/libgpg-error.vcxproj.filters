@@ -51,6 +51,15 @@
     <ClCompile Include="libgpg-error-HEAD\src\version.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="libgpg-error-HEAD\src\visibility.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libgpg-error-HEAD\src\estream-printf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libgpg-error-HEAD\src\estream.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libgpg-error-HEAD\generated\gpg-error.h">

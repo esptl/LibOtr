@@ -14,7 +14,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, see <http://www.gnu.org/licenses/>.
+ * License along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 #if HAVE_CONFIG_H
@@ -39,7 +39,7 @@ cright_blurb (void)
   static const char blurb[] =
     "\n\n"
     "This is Libgpg-error " PACKAGE_VERSION " - An error code library\n"
-    "Copyright 2003, 2004, 2010, 2013, 2014 g10 Code GmbH\n"
+    "Copyright 2003, 2004, 2010, 2013, 2014, 2015, 2016 g10 Code GmbH\n"
     "\n"
     "(" BUILD_REVISION " " BUILD_TIMESTAMP ")\n"
     "\n\n";
@@ -113,7 +113,7 @@ compare_versions (const char *my_version, const char *req_version)
  * and the version string is simply returned.
  */
 const char *
-gpg_error_check_version (const char *req_version)
+_gpg_error_check_version (const char *req_version)
 {
   if (req_version && req_version[0] == 1 && req_version[1] == 1)
     return cright_blurb ();

@@ -332,5 +332,26 @@
     <ClCompile Include="libgcrypt-HEAD\cipher\hmac-tests.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="libgcrypt-HEAD\cipher\gost-s-box.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libgcrypt-HEAD\cipher\poly1305.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libgcrypt-HEAD\cipher\cipher-poly1305.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libgcrypt-HEAD\cipher\cipher-ocb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libgcrypt-HEAD\cipher\mac-poly1305.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libgcrypt-HEAD\random\random-drbg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libgpg-error\libgpg-error-HEAD\src\w32-lock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

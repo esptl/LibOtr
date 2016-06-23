@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -13,6 +13,8 @@
   <ItemGroup>
     <ClCompile Include="libgpg-error-HEAD\src\code-from-errno.c" />
     <ClCompile Include="libgpg-error-HEAD\src\code-to-errno.c" />
+    <ClCompile Include="libgpg-error-HEAD\src\estream-printf.c" />
+    <ClCompile Include="libgpg-error-HEAD\src\estream.c" />
     <ClCompile Include="libgpg-error-HEAD\src\gpg-error.c" />
     <ClCompile Include="libgpg-error-HEAD\src\init.c" />
     <ClCompile Include="libgpg-error-HEAD\src\strerror-sym.c" />
@@ -20,6 +22,7 @@
     <ClCompile Include="libgpg-error-HEAD\src\strsource-sym.c" />
     <ClCompile Include="libgpg-error-HEAD\src\strsource.c" />
     <ClCompile Include="libgpg-error-HEAD\src\version.c" />
+    <ClCompile Include="libgpg-error-HEAD\src\visibility.c" />
     <ClCompile Include="libgpg-error-HEAD\src\w32-gettext.c" />
     <ClCompile Include="libgpg-error-HEAD\src\w32-lock.c" />
     <ClCompile Include="libgpg-error-HEAD\src\w32-thread.c" />
@@ -33,18 +36,19 @@
     <ProjectGuid>{A0A60AFF-1DBA-485E-8AEB-F919A2CE2D07}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>libgpgerror</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

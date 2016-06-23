@@ -119,12 +119,17 @@ void _gcry_mpi_immutable_failed (void);
 #define mpi_alloc_set_ui(a)   _gcry_mpi_alloc_set_ui ((a))
 #define mpi_m_check(a)        _gcry_mpi_m_check ((a))
 #define mpi_const(n)          _gcry_mpi_const ((n))
+#define mpi_swap_cond(a,b,sw)  _gcry_mpi_swap_cond ((a),(b),(sw))
+#define mpi_set_cond(w,u,set)  _gcry_mpi_set_cond ((w),(u),(set))
 
 void _gcry_mpi_clear( gcry_mpi_t a );
+gcry_mpi_t _gcry_mpi_set_cond (gcry_mpi_t w, const gcry_mpi_t u,
+                               unsigned long swap);
 gcry_mpi_t  _gcry_mpi_alloc_like( gcry_mpi_t a );
 gcry_mpi_t  _gcry_mpi_alloc_set_ui( unsigned long u);
 void _gcry_mpi_m_check( gcry_mpi_t a );
 void _gcry_mpi_swap( gcry_mpi_t a, gcry_mpi_t b);
+void _gcry_mpi_swap_cond (gcry_mpi_t a, gcry_mpi_t b, unsigned long swap);
 gcry_mpi_t _gcry_mpi_new (unsigned int nbits);
 gcry_mpi_t _gcry_mpi_snew (unsigned int nbits);
 gcry_mpi_t _gcry_mpi_set_opaque_copy (gcry_mpi_t a,
@@ -156,6 +161,9 @@ void  _gcry_log_mpidump( const char *text, gcry_mpi_t a );
 u32   _gcry_mpi_get_keyid( gcry_mpi_t a, u32 *keyid );
 byte *_gcry_mpi_get_buffer (gcry_mpi_t a, unsigned int fill_le,
                             unsigned int *r_nbytes, int *sign);
+byte *_gcry_mpi_get_buffer_extra (gcry_mpi_t a, unsigned int fill_le,
+                                  int extraalloc,
+                                  unsigned int *r_nbytes, int *sign);
 byte *_gcry_mpi_get_secure_buffer (gcry_mpi_t a, unsigned int fill_le,
                                    unsigned *r_nbytes, int *sign);
 void  _gcry_mpi_set_buffer ( gcry_mpi_t a, const void *buffer,
@@ -239,13 +247,18 @@ void _gcry_mpi_snatch_point (gcry_mpi_t x, gcry_mpi_t y, gcry_mpi_t z,
 /* Models describing an elliptic curve.  */
 enum gcry_mpi_ec_models
   {
-
+    /* The Short Weierstrass equation is
+          y^2 = x^3 + ax + b
+     */
     MPI_EC_WEIERSTRASS = 0,
+    /* The Montgomery equation is
+          by^2 = x^3 + ax^2 + x
+     */
     MPI_EC_MONTGOMERY,
-    MPI_EC_TWISTEDEDWARDS
-    /* The equation for Twisted Edwards curves is
+    /* The Twisted Edwards equation is
           ax^2 + y^2 = 1 + bx^2y^2
        Note that we use 'b' instead of the commonly used 'd'.  */
+    MPI_EC_EDWARDS
   };
 
 /* Dialects used with elliptic curves.  It is easier to keep the
@@ -276,6 +289,9 @@ void _gcry_mpi_ec_dup_point (mpi_point_t result,
 void _gcry_mpi_ec_add_points (mpi_point_t result,
                               mpi_point_t p1, mpi_point_t p2,
                               mpi_ec_t ctx);
+void _gcry_mpi_ec_sub_points (mpi_point_t result,
+                              mpi_point_t p1, mpi_point_t p2,
+                              mpi_ec_t ctx);
 void _gcry_mpi_ec_mul_point (mpi_point_t result,
                              gcry_mpi_t scalar, mpi_point_t point,
                              mpi_ec_t ctx);
@@ -291,6 +307,8 @@ gpg_err_code_t _gcry_mpi_ec_set_mpi (const char *name, gcry_mpi_t newvalue,
 gpg_err_code_t _gcry_mpi_ec_set_point (const char *name,
                                        gcry_mpi_point_t newvalue,
                                        gcry_ctx_t ctx);
+gpg_err_code_t _gcry_mpi_ec_decode_point (mpi_point_t result,
+                                          gcry_mpi_t value, mpi_ec_t ec);
 
 /*-- ecc-curves.c --*/
 gpg_err_code_t _gcry_mpi_ec_new (gcry_ctx_t *r_ctx,

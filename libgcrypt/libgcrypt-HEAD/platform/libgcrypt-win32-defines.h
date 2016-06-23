@@ -4,13 +4,16 @@
 #define _WIN32_IE		0x0600
 #define _WIN32_WINNT	WINVER
 #define _WIN32_WINDOWS	WINVER
+#define _STAT_DEFINED
 
 #include <WinSock2.h>
 #include <Windows.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
-#define snprintf _snprintf
+//#define snprintf _snprintf
 
 #ifdef _WIN64
 #define __x86_64__

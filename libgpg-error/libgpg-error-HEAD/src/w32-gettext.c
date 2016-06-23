@@ -15,7 +15,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 #if HAVE_CONFIG_H
@@ -108,7 +108,7 @@ MyCreateFileA (LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwSharedMode,
 
 /* Written by Ulrich Drepper <drepper@gnu.org>, 1995.  */
 /* Win32 code written by Tor Lillqvist <tml@iki.fi>.  */
-/* Renamed _nl_locale_name, removed unsed args, removed include files,
+/* Renamed _nl_locale_name, removed unused args, removed include files,
    non-W32 code and changed comments <wk@gnupg.org>.  */
 
 /* Mingw headers don't have latest language and sublanguage codes.  */
@@ -681,7 +681,7 @@ my_nl_locale_name (const char *categoryname)
 
   /* Dispatch on language.
      See also http://www.unicode.org/unicode/onlinedat/languages.html .
-     For details about languages, see http://www.ethnologue.com/ .  */
+     For details about languages, see https://www.ethnologue.com/ .  */
   switch (primary)
     {
     case LANG_AFRIKAANS: return "af_ZA";
@@ -1039,11 +1039,7 @@ my_nl_locale_name (const char *categoryname)
 	}
       return "uz";
     case LANG_VENDA:
-      /* FIXME: It's not clear whether Venda has the ISO 639-2 two-letter code
-	 "ve" or not.
-	 http://www.loc.gov/standards/iso639-2/englangn.html has it, but
-	 http://lcweb.loc.gov/standards/iso639-2/codechanges.html doesn't,  */
-      return "ven_ZA"; /* or "ve_ZA"? */
+      return "ve_ZA";
     case LANG_VIETNAMESE: return "vi_VN";
     case LANG_WELSH: return "cy_GB";
     case LANG_XHOSA: return "xh_ZA";
@@ -1373,17 +1369,25 @@ utf8_to_wchar (const char *string, size_t length, size_t *retlen)
 }
 
 
-/* Return a malloced string encoded in UTF-8 from the wide char input
-   string STRING.  Caller must free this value. On failure returns
-   NULL.  The result of calling this function with STRING set to NULL
+/* Return a malloced string encoded in the native console codepage
+   from the wide char input string STRING.
+   Caller must free this value. On failure returns NULL.
+   The result of calling this function with STRING set to NULL
    is not defined. */
 static char *
 wchar_to_native (const wchar_t *string, size_t length, size_t *retlen)
 {
   int n;
   char *result;
+  unsigned int cpno = GetConsoleOutputCP ();
 
-  n = WideCharToMultiByte (CP_ACP, 0, string, length, NULL, 0, NULL, NULL);
+  /* GetConsoleOutputCP returns the 8-Bit codepage that should be used
+     for console output. If the codepage is not returned we fall back
+     to the codepage GUI programs should use (CP_ACP). */
+  if (!cpno)
+    cpno = GetACP ();
+
+  n = WideCharToMultiByte (cpno, 0, string, length, NULL, 0, NULL, NULL);
   if (n < 0 || (n+1) <= 0)
     return NULL;
 
@@ -1391,7 +1395,7 @@ wchar_to_native (const wchar_t *string, size_t length, size_t *retlen)
   if (!result)
     return NULL;
 
-  n = WideCharToMultiByte (CP_ACP, 0, string, length, result, n, NULL, NULL);
+  n = WideCharToMultiByte (cpno, 0, string, length, result, n, NULL, NULL);
   if (n < 0)
     {
       jnlib_free (result);

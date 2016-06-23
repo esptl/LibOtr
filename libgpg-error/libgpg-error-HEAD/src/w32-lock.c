@@ -14,7 +14,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 #if HAVE_CONFIG_H
@@ -49,8 +49,8 @@ get_lock_object (gpgrt_lock_t *lockhd)
 }
 
 
-gpg_err_code_t
-gpgrt_lock_init (gpgrt_lock_t *lockhd)
+gpg_err_code_t _cdecl
+_gpgrt_lock_init (gpgrt_lock_t *lockhd)
 {
   _gpgrt_lock_t *lock = (_gpgrt_lock_t*)lockhd;
 
@@ -77,7 +77,7 @@ gpgrt_lock_init (gpgrt_lock_t *lockhd)
 
 
 gpg_err_code_t
-gpgrt_lock_lock (gpgrt_lock_t *lockhd)
+_gpgrt_lock_lock (gpgrt_lock_t *lockhd)
 {
   _gpgrt_lock_t *lock = get_lock_object (lockhd);
 
@@ -107,7 +107,31 @@ gpgrt_lock_lock (gpgrt_lock_t *lockhd)
 
 
 gpg_err_code_t
-gpgrt_lock_unlock (gpgrt_lock_t *lockhd)
+_gpgrt_lock_trylock (gpgrt_lock_t *lockhd)
+{
+  _gpgrt_lock_t *lock = get_lock_object (lockhd);
+
+  if (!lock->initdone)
+    {
+      if (!InterlockedIncrement (&lock->started))
+        {
+          gpgrt_lock_init (lockhd);
+        }
+      else
+        {
+          while (!lock->initdone)
+            Sleep (0);
+        }
+    }
+
+  if (!TryEnterCriticalSection (&lock->csec))
+    return GPG_ERR_EBUSY;
+  return 0;
+}
+
+
+gpg_err_code_t
+_gpgrt_lock_unlock (gpgrt_lock_t *lockhd)
 {
   _gpgrt_lock_t *lock = get_lock_object (lockhd);
 
@@ -121,7 +145,7 @@ gpgrt_lock_unlock (gpgrt_lock_t *lockhd)
 /* Note: Use this function only if no other thread holds or waits for
    this lock.  */
 gpg_err_code_t
-gpgrt_lock_destroy (gpgrt_lock_t *lockhd)
+_gpgrt_lock_destroy (gpgrt_lock_t *lockhd)
 {
   _gpgrt_lock_t *lock = get_lock_object (lockhd);
 

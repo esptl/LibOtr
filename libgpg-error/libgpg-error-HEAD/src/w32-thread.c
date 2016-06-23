@@ -14,7 +14,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 #if HAVE_CONFIG_H
@@ -37,7 +37,7 @@
 
 
 gpg_err_code_t
-gpgrt_yield (void)
+_gpgrt_yield (void)
 {
   Sleep (0);
   return 0;

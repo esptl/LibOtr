@@ -4,3 +4,5 @@ Release
 *.sdf
 *.opensdf
 *.user
+/ipch/ESP.THIRDPARTY.LIBOTR-6e6c083c/ESP.THIRDPARTY.ipch
+/ipch/OTRTEST-565c9970/OTRTEST-8364a501.ipch
