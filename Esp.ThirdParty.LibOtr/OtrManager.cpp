@@ -184,22 +184,22 @@ namespace Esp {
 
 			void OtrManager::OtrlMessageInitiateSmp(ConnContext *context, const unsigned char *secret, size_t secretlen)
 			{
-				otrl_message_initiate_smp(_state, _operations->_ops, context,nullptr, secret, secretlen);
+				otrl_message_initiate_smp(_state, _operations->_ops, nullptr, context, secret, secretlen);
 			}
 
 			void OtrManager::OtrlMessageInitiateSmpQ(ConnContext *context, const char *question, const unsigned char *secret, size_t secretlen)
 			{
-				otrl_message_initiate_smp_q(_state, _operations->_ops, context, nullptr,question, secret, secretlen);
+				otrl_message_initiate_smp_q(_state, _operations->_ops, nullptr, context, question, secret, secretlen);
 			}
 
 			void OtrManager::OtrlMessageRespondSmp(ConnContext *context, const unsigned char *secret, size_t secretlen)
 			{
-				otrl_message_respond_smp(_state, _operations->_ops, context, nullptr, secret, secretlen);
+				otrl_message_respond_smp(_state, _operations->_ops, nullptr, context,  secret, secretlen);
 			}
 
 			void OtrManager::OtrlMessageAbortSmp(ConnContext *context)
 			{
-				otrl_message_abort_smp(_state, _operations->_ops, context, nullptr);
+				otrl_message_abort_smp(_state, _operations->_ops, nullptr, context);
 			}
 		}
 	}

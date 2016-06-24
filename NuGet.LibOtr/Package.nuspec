@@ -2,17 +2,17 @@
 <package >
   <metadata>
     <id>Esp.ThirdParty.LibOtr</id>
-    <version>1.0.7</version>
+    <version>1.0.11</version>
     <title>LibOtr </title>
     <authors>LibOtr/ESP Technologies Ltd.</authors>
     <owners></owners>
     <description>
-    This package wraps LibOtr 4.1.0 in a manager component.
+    This package wraps LibOtr 4.1.1 in a manager component.
     </description>
     <releaseNotes>
     </releaseNotes>
     <summary>
-      This package wraps LibOtr 4.1.0 in a manager component.
+      This package wraps LibOtr 4.1.1 in a manager component.
     </summary>
     <language>en-US</language>
     <projectUrl>https://nuget.org/packages/NuGet.UI.List</projectUrl>

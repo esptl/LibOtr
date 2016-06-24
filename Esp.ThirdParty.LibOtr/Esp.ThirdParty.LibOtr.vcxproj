@@ -76,6 +76,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)libgcrypt\libgcrypt-HEAD\generated;$(SolutionDir)libotr\libotr-HEAD\platform;$(SolutionDir)libotr\libotr-HEAD\src;$(SolutionDir)libgpg-error\libgpg-error-HEAD\generated;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)$(Configuration);$(LibraryPath)</LibraryPath>
+    <LinkKeyFile>../Esp.ThirdParty.LibOtr.Managed/OtrManaged.snk</LinkKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -84,6 +85,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir)libgcrypt\libgcrypt-HEAD\generated;$(SolutionDir)libotr\libotr-HEAD\platform;$(SolutionDir)libotr\libotr-HEAD\src;$(SolutionDir)libgpg-error\libgpg-error-HEAD\generated;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)$(Configuration);$(LibraryPath)</LibraryPath>
+    <LinkKeyFile>../Esp.ThirdParty.LibOtr.Managed/OtrManaged.snk</LinkKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
