@@ -75,8 +75,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)libgcrypt\libgcrypt-HEAD\generated;$(SolutionDir)libotr\libotr-HEAD\platform;$(SolutionDir)libotr\libotr-HEAD\src;$(SolutionDir)libgpg-error\libgpg-error-HEAD\generated;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)$(Configuration);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)Debug;$(LibraryPath)</LibraryPath>
     <LinkKeyFile>../Esp.ThirdParty.LibOtr.Managed/OtrManaged.snk</LinkKeyFile>
+    <OutDir>$(SolutionDir)Release</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

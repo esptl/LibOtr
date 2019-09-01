@@ -56,14 +56,27 @@ namespace Esp {
 				_context->their_instance = pValue;
 			}
 
-			OtrFingerprint^ OtrConnection::OurFingerprint::get()
+			System::String^ OtrConnection::OurFingerprint::get()
 			{
-				return nullptr;
+				char ourHash[OTRL_PRIVKEY_FPRINT_HUMAN_LEN];
+
+				memset(ourHash, 0, sizeof(ourHash));
+				strncpy((char *)ourHash, ("missing"), OTRL_PRIVKEY_FPRINT_HUMAN_LEN-1);
+				char * fingerprint = otrl_privkey_fingerprint(_manager->State, ourHash, _context->accountname,  (char *)_manager->Protocol.ToPointer());
+				System::Diagnostics::Debug::WriteLine(L"AccName: " + gcnew System::String(_context->accountname));
+				System::Diagnostics::Debug::WriteLine(L"Protocol: " + gcnew System::String((char *)_manager->Protocol.ToPointer()));
+				if (!fingerprint) return gcnew System::String("NULL FINGERPRINT");
+				return gcnew System::String(fingerprint);
+			
 			}
 
 			OtrFingerprint^ OtrConnection::TheirFingerprint::get()
 			{
 				return gcnew OtrFingerprint(_context->active_fingerprint);
+			}
+
+			OtrManager^ OtrConnection::Manager::get() {
+				return _manager;
 			}
 
 			OtrContact^ OtrConnection::Contact::get() {
@@ -99,6 +112,27 @@ namespace Esp {
 			void OtrConnection::AbortSmp()
 			{
 				_manager->OtrlMessageAbortSmp(_context);
+			}
+
+			void OtrConnection::Finish()
+			{
+				char *userName = strdup(_context->username);
+				char *accountName = strdup(_context->accountname);
+				int added = 0;
+				
+				/*_context = otrl_context_find(_manager->State,
+					userName,
+					accountName,
+					(char *)_manager->Protocol.ToPointer(), OTRL_INSTAG_BEST, 1, &added, nullptr, nullptr);*/
+				otrl_message_disconnect_all_instances(_manager->State, _manager->Operations->_ops, nullptr, accountName, (char *)_manager->Protocol.ToPointer(), userName);
+				
+
+				_context = otrl_context_find(_manager->State,
+					userName,
+					accountName,
+					(char *)_manager->Protocol.ToPointer(), OTRL_INSTAG_BEST, 1, &added, nullptr, nullptr);
+			
+				
 			}
 
 			void OtrConnection::AnswerSmp(String^ pSecret)
