@@ -55,13 +55,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="OtrManaged.snk" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Esp.ThirdParty.LibOtr\Esp.ThirdParty.LibOtr.vcxproj">
       <Project>{3a950204-4088-4728-8d5f-902ddbf87873}</Project>
       <Name>Esp.ThirdParty.LibOtr</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="OtrManaged.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

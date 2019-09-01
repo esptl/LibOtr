@@ -91,7 +91,7 @@
     <Message Text="SUCCESS: Published package." Condition=" '$(Configuration)|$(Platform)|$(ExitCode)' == 'Release|AnyCPU|0' " Importance="High" />
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>copy "$(SolutionDir)$(Configuration)\Esp.ThirdParty.LibOtr.dll" "$(ProjectDir)lib\Esp.ThirdParty.LibOtr.dll"
+    <PreBuildEvent>copy "$(SolutionDir)x64\$(Configuration)\Esp.ThirdParty.LibOtr.dll" "$(ProjectDir)lib\Esp.ThirdParty.LibOtr.dll"
 copy "$(SolutionDir)Esp.ThirdParty.LibOtr.Managed\bin\$(Configuration)\Esp.ThirdParty.LibOtr.Managed.dll" "$(ProjectDir)lib\Esp.ThirdParty.LibOtr.Managed.dll"</PreBuildEvent>
   </PropertyGroup>
 </Project>
