@@ -1,18 +1,26 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace Esp.ThirdParty.LibOtr
 {    
     public class Otr : IUIOperationProvider  
     {
         private readonly OtrManager _manager;
+        private readonly Timer _timer;
+        private IntPtr _timerData;
 
+        private void TimerTick(object pState)
+        {
+            _manager.Poll(_timerData);
+        }
 
         public Otr(string pProtocol, string pAccountName, string pBaseFile)
         {
             if(!Directory.Exists(Path.GetDirectoryName(pBaseFile)))
                 Directory.CreateDirectory(Path.GetDirectoryName(pBaseFile));
+            _timer = new Timer(TimerTick);
             _manager = new OtrManager(this,pAccountName, pProtocol, pBaseFile);
         }
 
@@ -50,6 +58,9 @@ namespace Esp.ThirdParty.LibOtr
         public Action<OtrConnection> SmpFailed { get; set; } = (pConnection) => Debug.WriteLine($"{pConnection.Contact} SMP exchange failed therefore contact is not trusted.");
         public Action<OtrConnection> SmpAborted { get; set; } = (pConnection) => Debug.WriteLine($"{pConnection.Contact} SMP exchange aborted therefore contact is not trusted.");
 
+        public Action<OtrConnection> SmpError { get; set; } = (pConnection) => Debug.WriteLine($"{pConnection.Contact} SMP error occurred.");
+
+        
         #endregion
 
         public OtrMessage SendMessage(OtrContact pContact, string pMessage)
@@ -184,15 +195,23 @@ namespace Esp.ThirdParty.LibOtr
                 case OtrSmpEvent.AskForAnswer:
                     SmpAskForAnswer(pConnection, pPercent, pQuestion);
                     break;
+                case OtrSmpEvent.Error:
+                    break;
                 case OtrSmpEvent.Cheated:
+                    SmpError(pConnection);
                     break;
                 case OtrSmpEvent.InProgress:
+                    SmpProgress(pConnection, pPercent);
                     break;
                 case OtrSmpEvent.Success:
+                    _manager.WriteFingerprints();
+                    SmpSuccess(pConnection);
                     break;
                 case OtrSmpEvent.Failure:
+                    SmpFailed(pConnection);
                     break;
                 case OtrSmpEvent.Abort:
+                    SmpAborted(pConnection);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(pEvent), pEvent, null);
@@ -256,6 +275,12 @@ namespace Esp.ThirdParty.LibOtr
                 default:
                     throw new ArgumentOutOfRangeException(nameof(pCoversionType), pCoversionType, null);
             }
+        }
+
+        void IUIOperationProvider.OnTimerChange(IntPtr pData, int pInternal)
+        {
+            _timerData = pData;
+            _timer.Change(pInternal > 0 ? pInternal * 1000 : System.Threading.Timeout.Infinite, pInternal > 0 ? pInternal * 1000 : System.Threading.Timeout.Infinite);
         }
 
         #endregion

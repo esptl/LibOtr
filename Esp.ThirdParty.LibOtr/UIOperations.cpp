@@ -430,8 +430,10 @@ namespace Esp {
 				case OTRL_SMPEVENT_ASK_FOR_ANSWER:
 					_provider->OnSmpEvent(gcnew OtrConnection(_manager,context, false), OtrSmpEvent::AskForAnswer, question, (int)progress_percent);
 					break;
-				case  OTRL_SMPEVENT_CHEATED:
 				case  OTRL_SMPEVENT_ERROR:
+					_provider->OnSmpEvent(gcnew OtrConnection(_manager, context, false), OtrSmpEvent::Error, question, (int)progress_percent);
+					break;
+				case  OTRL_SMPEVENT_CHEATED:
 					_provider->OnSmpEvent(gcnew OtrConnection(_manager, context, false), OtrSmpEvent::Cheated, question, (int)progress_percent);
 					break;
 				case  OTRL_SMPEVENT_IN_PROGRESS:
@@ -621,7 +623,8 @@ namespace Esp {
 			*/
 			void UIOperations::HookTimerControl(void *opdata, unsigned int interval)
 			{
-				
+				_provider->OnTimerChange((IntPtr)(Void*)(opdata), interval);
+			//	_provider->OnCreateInstag(gcnew String(accountname));
 			}
 		}
 	}

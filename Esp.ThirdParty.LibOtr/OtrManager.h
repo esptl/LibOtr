@@ -30,8 +30,13 @@ namespace Esp {
 				void OtrlMessageInitiateSmp( ConnContext *context, const unsigned char *secret,	size_t secretlen);
 				void OtrlMessageInitiateSmpQ(ConnContext *context, const char *question, const unsigned char *secret, size_t secretlen);
 				void OtrlMessageRespondSmp(ConnContext *context, const unsigned char *secret, size_t secretlen);
-				void OtrlMessageAbortSmp(ConnContext *context);
 
+				void OtrlMessageAbortSmp(ConnContext *context);
+				
+				property OtrlUserState State { OtrlUserState get(); };
+				property IntPtr AccountName { IntPtr get(); };
+				property IntPtr Protocol { IntPtr get(); };
+				property UIOperations^ Operations { UIOperations^ get(); };
 			public:
 				OtrManager(
 					IUIOperationProvider^ pProvider,
@@ -48,6 +53,7 @@ namespace Esp {
 				unsigned int GenerateInstag(String ^pAccountName);
 				bool GeneratePrivKey(String ^pAccountName);
 				void WriteFingerprints();
+				void Poll(IntPtr pData);
 			};
 		}
 	}

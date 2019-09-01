@@ -11,7 +11,7 @@ namespace Esp {
 		namespace LibOtr
 		{
 			public enum class OtrErrorMessage : int { Unknown, EncryptionError, MessageNotInPrivate, MessageUnreadable, MessageMalformed };
-			public enum class OtrSmpEvent : int { AskForSecret, AskForAnswer, Cheated, InProgress, Success, Failure, Abort };
+			public enum class OtrSmpEvent : int { AskForSecret, AskForAnswer, Cheated, InProgress, Success, Failure, Abort, Error };
 			public enum class OtrMessageEvent : int {
 				EncryptionRequired,
 				EncryptionError,
@@ -52,6 +52,7 @@ namespace Esp {
 				void OnMessageEvent(OtrConnection^ pConnection, OtrMessageEvent pEvent, String^ pMessage, int pGCryptErrorCode);
 				void OnCreateInstag(String^ pAccountname);
 				String ^OnConvertMessage(OtrConnection^ pConnection, OtrConvertType pCoversionType, String^ pMessage);
+				void OnTimerChange(IntPtr pData, int pInterval);
 
 			
 

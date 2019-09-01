@@ -201,6 +201,29 @@ namespace Esp {
 			{
 				otrl_message_abort_smp(_state, _operations->_ops, nullptr, context);
 			}
+
+			void OtrManager::Poll(IntPtr pData)
+			{
+				otrl_message_poll(_state, _operations->_ops, pData.ToPointer());
+			}
+
+
+			OtrlUserState OtrManager::State::get() {
+				return _state;
+			}
+
+			IntPtr OtrManager::AccountName::get() {
+				return _accountName;
+			}
+
+			IntPtr OtrManager::Protocol::get() {
+				return _protocol;
+			}
+			UIOperations^ OtrManager::Operations::get()
+			{
+				return _operations;
+			}
+
 		}
 	}
 }

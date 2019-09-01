@@ -41,12 +41,16 @@ namespace Esp {
 					void set(int);
 				}
 
-				property OtrFingerprint^ OurFingerprint {
-					OtrFingerprint^ get();
+				property System::String^ OurFingerprint {
+					System::String^ get();
 				}
 
 				property OtrFingerprint^ TheirFingerprint {
 					OtrFingerprint^ get();
+				}
+
+				property OtrManager^ Manager {
+					OtrManager^ get();
 				}
 
 				property OtrContact^ Contact {
@@ -56,6 +60,7 @@ namespace Esp {
 				void InitiateSmp(String^ pQuestion, String^ pAnswer);
 				void InitiateSmp(String^ pSecret);
 				void AbortSmp();
+				void Finish();
 				void AnswerSmp(String^ pSecret);
 			};
 		}
