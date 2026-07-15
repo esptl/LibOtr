@@ -1,4 +1,4 @@
-// Jenkins pipeline for the Esp.ThirdParty.LibOtr NuGet package.
+﻿// Jenkins pipeline for the Esp.ThirdParty.LibOtr NuGet package.
 //
 // Job setup: New Item -> Pipeline -> "Pipeline script from SCM" -> this repo, script path "Jenkinsfile".
 // The final stage pushes the nuspec version bump back to master, so the job's git
@@ -11,7 +11,7 @@
 //  - access to https://svw-esp-nuge.internal.esptl.com
 
 pipeline {
-    agent { label 'BuildAgent2019' }
+    agent { label 'BuildAgent2022' }
     options { disableConcurrentBuilds() }
     stages {
         stage('Build, pack, push') {
