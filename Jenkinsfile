@@ -1,22 +1,34 @@
-﻿// Jenkins pipeline for the Esp.ThirdParty.LibOtr NuGet package.
+// Jenkins pipeline for the Esp.ThirdParty.LibOtr NuGet package.
 //
-// Job setup: New Item -> Pipeline -> "Pipeline script from SCM" -> this repo, script path "Jenkinsfile".
-// The final stage pushes the nuspec version bump back to master, so the job's git
-// credential needs push rights. To avoid retrigger loops, exclude the Jenkins
-// committer (or the "[ci skip]" message) from SCM polling.
+// Our Jenkins has no "Pipeline script from SCM", so paste this into the Script box
+// of a Pipeline job (this file in git stays the source of truth). The Checkout
+// stage clones the repo itself - set gitCredentialsId to the ID of a credential
+// that can reach github.com/esptl (this repo lives on GitHub, not the internal GitLab).
+//
+// Alternatively use a standard freestyle job (like NuGet_Core): Git SCM on this
+// repo + label BuildAgent2022 + one batch step "call BuildNuget.bat" + a batch
+// step with the git add/commit/push lines from the last stage below.
 //
 // Agent prerequisites:
 //  - Visual Studio 2026 (18.x) with C++/CLI (MSVC v145)
 //  - .NET 10 SDK (for the Esp.ThirdParty.LibOtr.Managed net10.0-windows wrapper)
 //  - access to https://svw-esp-nuge.internal.esptl.com
 
+def repoUrl = 'https://github.com/esptl/LibOtr'
+def gitCredentialsId = 'build-agent'
+
 pipeline {
     agent { label 'BuildAgent2022' }
     options { disableConcurrentBuilds() }
     stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'master', credentialsId: gitCredentialsId, url: repoUrl
+            }
+        }
         stage('Build, pack, push') {
             steps {
-                bat 'BuildNuget.bat'
+                bat 'call BuildNuget.bat'
             }
         }
         stage('Commit version bump') {
