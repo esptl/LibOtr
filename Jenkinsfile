@@ -1,4 +1,4 @@
-// Jenkins pipeline for the Esp.ThirdParty.LibOtr NuGet package.
+﻿// Jenkins pipeline for the Esp.ThirdParty.LibOtr NuGet package.
 //
 // Our Jenkins has no "Pipeline script from SCM", so paste this into the Script box
 // of a Pipeline job (this file in git stays the source of truth). The Checkout
@@ -22,7 +22,7 @@ def repoUrl = 'https://git.internal.esptl.com/Softphone/libotr'
 def gitCredentialsId = 'build-agent'
 
 pipeline {
-    agent { label 'BuildAgent2022' }
+    agent { label 'Buildagent2022' }
     options { disableConcurrentBuilds() }
     stages {
         stage('Checkout') {
